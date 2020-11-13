@@ -1,0 +1,48 @@
+---
+title: "opinion_data"
+author: "Andre Ferreira"
+output: html_document
+---
+
+```{r setup}
+
+library(shiny)
+library(PPBDS.data)
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(shinythemes)
+library(gganimate)
+
+```
+
+```{r}
+
+opinion_data <- read_csv("data-nz8QR.csv",
+                         col_types = cols(
+                             Location = col_character(),
+                             `Not serious at all` = col_double(),
+                             `A little serious` = col_double(),
+                             `Somewhat serious` = col_double(),
+                             `Very serious` = col_double()
+                         )) %>%
+  
+  rename("Not_serious_at_all" = `Not serious at all`,
+         "A_little_serious" = `A little serious`,
+         "Somewhat_serious" = `Somewhat serious`,
+         "Very_serious" = `Very serious`) %>%
+  
+  slice(1:2, 
+        4:5, 
+        7:9, 
+        11) %>%
+  
+  pivot_longer(cols = Not_serious_at_all:Very_serious,
+               names_to = "Attitudes",
+               values_to = "Values")
+
+write_rds(opinion_data, "opinion_data.rds")
+
+```
+
+

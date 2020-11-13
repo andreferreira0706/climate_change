@@ -1,0 +1,32 @@
+---
+title: "opinion_USA"
+author: "Andre Ferreira"
+output: html_document
+---
+
+```{r setup}
+
+library(shiny)
+library(PPBDS.data)
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(shinythemes)
+library(gganimate)
+
+```
+
+```{r}
+
+opinion_USA <- read_csv("data-1N4Au.csv",
+                        col_types = cols(
+                          X.1 = col_character(),
+                          X.2 = col_double()
+                        )) %>%
+  rename("Political_Affiliation" = X.1,
+         "Percent_Believe_In_Climate_Change" = X.2)
+
+write_rds(opinion_USA, "opinion_USA.rds")
+
+```
+
