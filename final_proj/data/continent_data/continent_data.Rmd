@@ -22,7 +22,7 @@ continent_data <- read_csv("owid-co2-data-2.csv",
                              country = col_character()
                            )) %>%
   select(co2, co2_growth_prct, country, year) %>%
-  filter(country == c("Africa",
+  filter(country %in% c("Africa",
                       "Asia",
                       "Australia",
                       "Europe",

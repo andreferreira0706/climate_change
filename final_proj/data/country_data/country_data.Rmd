@@ -1,0 +1,34 @@
+---
+title: "country_data"
+author: "Andre Ferreira"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(shiny)
+library(shinythemes)
+library(PPBDS.data)
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(gganimate)
+
+```
+
+```{r}
+
+country_data <- read_csv("owid-co2-data.csv",
+                         col_types = cols(
+                           .default = col_double(),
+                           iso_code = col_character(),
+                           country = col_character()
+                         )) %>%
+  drop_na(iso_code) %>%
+  filter(year >= 1990)
+
+write_rds(country_data, "country_data.rds")
+
+```
+

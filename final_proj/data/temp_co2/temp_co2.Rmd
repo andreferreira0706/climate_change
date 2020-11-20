@@ -1,0 +1,37 @@
+---
+title: "temp_co2"
+author: "Andre Ferreira"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(shiny)
+library(shinythemes)
+library(PPBDS.data)
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(gganimate)
+
+```
+
+```{r}
+
+co2_long_term <- read_csv("co2-concentration-long-term.csv",
+                          col_types = cols(
+                            Year = col_double(),
+                            `CO2 concentrations (NOAA, 2018)` = col_double()
+                          )) 
+
+temp_long_term <- read_csv("temperature-anomaly.csv",
+                           col_types = cols(
+                               Entity = col_character(),
+  Year = col_double(),
+  `Median temperature anomaly from 1961-1990 average` = col_double(),
+  `Upper bound (95% CI)` = col_double(),
+  `Lower bound (95% CI)` = col_double()
+                           ))
+```
+
