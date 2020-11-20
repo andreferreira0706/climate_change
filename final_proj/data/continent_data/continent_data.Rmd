@@ -1,0 +1,36 @@
+---
+title: "continent_data"
+author: "Andre Ferreira"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(gganimate)
+```
+
+```{r}
+
+continent_data <- read_csv("owid-co2-data-2.csv",
+                           col_types = cols(
+                             .default = col_double(),
+                             iso_code = col_character(),
+                             country = col_character()
+                           )) %>%
+  select(co2, co2_growth_prct, country, year) %>%
+  filter(country == c("Africa",
+                      "Asia",
+                      "Australia",
+                      "Europe",
+                      "North America",
+                      "South America")) %>%
+  drop_na(co2_growth_prct)
+  
+write_rds(continent_data, "continent_data.rds")
+
+```
+

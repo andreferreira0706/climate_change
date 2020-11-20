@@ -36,7 +36,6 @@ opinion_data <- read_csv("data-nz8QR.csv",
         4:5, 
         7:9, 
         11) %>%
-  
   pivot_longer(cols = Not_serious_at_all:Very_serious,
                names_to = "Attitudes",
                values_to = "Values")

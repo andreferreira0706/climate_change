@@ -1,9 +1,9 @@
 library(shiny)
+library(shinythemes)
 library(PPBDS.data)
 library(ggplot2)
 library(ggthemes)
 library(tidyverse)
-library(shinythemes)
 library(gganimate)
 
 opinion_data <- read_rds("data/opinion_data/opinion_data.rds")
