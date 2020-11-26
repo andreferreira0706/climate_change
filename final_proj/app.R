@@ -14,28 +14,21 @@ ui <- navbarPage(
     
 # Title of Shiny App
 
-    theme = shinytheme("slate"),
+    theme = shinytheme("lumen"),
 
 # Background Theme of the Shiny App using the shinythemes package 
 
     tabPanel("Background Information",
-             titlePanel("Global Warming's Greatest Factor: Carbon Emissions"),
              
-             p("Human-activity, specifically the emission of carbon dioxide
-               and other greenhouse gases, is the primary factor of our 
-               changing climate. It is one of the most pressing issues of our
-               generation, yet there still exists those who refuse to 
-               acknowledge the severity of climate change, and cling to the 
-               belief that human activity has not been one of the greatest
-               factors contributing to the decline of our planet's health
-               and wellbeing."),
-             
-             br(),
-             
-             mainPanel(splitLayout(plotOutput("opinion_plot"),
-                                   plotOutput("opinion2_plot")))
+             fluidPage(
+                 titlePanel("Global Warming's Greatest Factor: Carbon Emissions"),
+                 
+                 br(),
+                
+                  mainPanel(splitLayout(plotOutput("opinion_plot"),
+                                       plotOutput("opinion2_plot")))
  
-             )
+             ))
     
     
 )
