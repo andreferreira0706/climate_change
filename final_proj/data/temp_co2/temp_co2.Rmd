@@ -23,9 +23,15 @@ co2_long_term <- read_csv("co2-concentration-long-term.csv",
                           col_types = cols(
                             Year = col_double(),
                             `CO2 concentrations (NOAA, 2018)` = col_double()
-                          )) 
+                          )) %>%
+  rename("co2_concentrations" = `CO2 concentrations (NOAA, 2018)`) %>%
+  filter(Year >= 1850)
 
 write_rds(co2_long_term, "co2_long_term.rds")
+
+```
+
+```{r}
 
 temp_long_term <- read_csv("temperature-anomaly.csv",
                            col_types = cols(
@@ -34,9 +40,26 @@ temp_long_term <- read_csv("temperature-anomaly.csv",
                              `Median temperature anomaly from 1961-1990 average` = col_double(),
                              `Upper bound (95% CI)` = col_double(),
                              `Lower bound (95% CI)` = col_double()
-                           ))
+                           )) %>%
+  rename("median_temp_anomaly" = `Median temperature anomaly from 1961-1990 average`,
+         "upper_bound" = `Upper bound (95% CI)`,
+         "lower_bound" = `Lower bound (95% CI)`) %>%
+  select(- upper_bound,
+         - lower_bound) %>%
+  slice(1:170)
 
 write_rds(temp_long_term, "temp_long_term.rds")
 
 ```
+
+```{r}
+
+correlation <- full_join(co2_long_term, temp_long_term, by = "Year") %>%
+  drop_na()
+
+write_rds(correlation, "correlation.rds")
+
+```
+
+
 

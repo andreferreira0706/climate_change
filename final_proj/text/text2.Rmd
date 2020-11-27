@@ -1,0 +1,14 @@
+---
+title: "text2"
+author: "Andre Ferreira"
+output: html_document
+---
+
+The graph depicts data from an experiment by Vanderbilt University's Latin
+American Public Opinion Project conducted in 2017. It shows that climate change
+is a partisan issue in the US. While more than three-quarters of individuals on
+the liberal side of the political spectrum reported that climate change is a very
+serious problem, less than 20% of those with conservative leanings expressed the 
+same degree of concern. Ideally, any individual, no matter their political 
+affiliation, should recognize the grave concern that is our changing climate, and 
+believe it to pose a very serious problem. 
