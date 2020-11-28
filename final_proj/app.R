@@ -12,6 +12,7 @@ continent_data <- read_rds("data/continent_data/continent_data.rds")
 country_data <- read_rds("data/country_data/country_data.rds")
 co2_long_term <- read_rds("data/temp_co2/co2_long_term.rds")
 temp_long_term <- read_rds("data/temp_co2/temp_long_term.rds")
+correlation <- read_rds("data/temp_co2/correlation.rds")
 
 ui <- navbarPage(
     "The Reality of Climate Change",
@@ -48,7 +49,13 @@ ui <- navbarPage(
                  titlePanel("The Relationship that Exists Between Carbon Emissions
                             & Temperature Anomalies"),
                  
-                 mainPanel(plotOutput("co2temptrend_plot"))
+                 mainPanel(imageOutput("co2concentration_plot"),
+                           type = "html",
+                           loader = "loader2"),
+                 mainPanel(imageOutput("tempanomaly_plot"),
+                           type = "html",
+                           loader = "loader2"),
+                 mainPanel(plotOutput("correlation_plot"))
                  
              ))
     
@@ -112,25 +119,42 @@ server <- function(input, output) {
             
 })
     
-    output$co2temptrend_plot <- renderPlot({
+    output$co2concentration_plot <- renderPlot({
         
-        correlation %>%
-            ggplot(aes(x = Year, y = median_temp_anomaly)) +
-            geom_point() +
-            transition_time(Year) +
-            labs(title = "Year: {frame_time}")
-        
-        anim_save("tempgraph.gif", correlation)
+        list(
+            src = 'data/temp_co2/co2_concentration.gif',
+            contentType = 'image/gif'
+        )
         
 })
     
-    output$co2temptrend2_plot <- renderPlot({
+    output$tempanomaly_plot <- renderPlot({
         
-        correlation %>%
-            ggplot(aes(x = Year, y = co2_concentrations)) +
-            geom_line()
+        list(
+            src = 'data/temp_co2/temp_anomaly.gif',
+            contentType = 'image/gif'
+        )
         
     })
+   
+    output$correlation_plot <- renderPlot({
+        
+        correlation %>%
+            ggplot(aes(x = median_temp_anomaly, 
+                       y = co2_concentrations,
+                       color = median_temp_anomaly)) +
+            geom_point() +
+            geom_smooth(method = "lm", se = FALSE, color = "black", linetype = 2) +
+            theme_few() +
+            labs(title = "Global Median Temperature Anomalies v. Global CO2 Concentrations",
+                 subtitle = "Examining the Correlation Between These 2 Variables Over Time",
+                 x = "Median Temperature Anomaly",
+                 y = "CO2 Concentration (ppm)",
+                 caption = "Source: Source: https://ourworldindata.org/co2-and-other-greenhouse-gas-emissions") +
+            theme(legend.title = element_blank())
+     
+    }) 
+    
     
 }
 

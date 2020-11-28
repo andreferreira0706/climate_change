@@ -27,6 +27,20 @@ co2_long_term <- read_csv("co2-concentration-long-term.csv",
   rename("co2_concentrations" = `CO2 concentrations (NOAA, 2018)`) %>%
   filter(Year >= 1850)
 
+co2_long_term <- co2_long_term %>%
+  ggplot(aes(x = Year, y = co2_concentrations)) +
+  geom_point(aes(group = seq_along(Year))) +
+  geom_line(color = "red") +
+  theme_minimal() +
+  transition_reveal(Year) +
+  labs(title = "Global Atmospheric CO2 Concentration",
+       subtitle = "Examining the Correlation Between Time & Carbon Dioxide Concentration",
+       x = "Year",
+       y = "CO2 Concentration (ppm)",
+       caption = "Source: https://ourworldindata.org/co2-and-other-greenhouse-gas-emissions")
+
+anim_save("co2_concentration.gif", co2_long_term)
+
 write_rds(co2_long_term, "co2_long_term.rds")
 
 ```
@@ -48,11 +62,48 @@ temp_long_term <- read_csv("temperature-anomaly.csv",
          - lower_bound) %>%
   slice(1:170)
 
+temp_long_term <- temp_long_term %>%
+  ggplot(aes(x = Year, y = median_temp_anomaly)) +
+  geom_point(aes(group = seq_along(Year))) +
+  geom_line(color = "blue") +
+  theme_minimal() +
+  transition_reveal(Year) +
+  labs(title = "Median Temperature Anomaly Trend",
+       subtitle = "Examining the Correlation Between Time & Global Temperature Anomalies",
+       x = "Year",
+       y = "Median Temperature Anomaly",
+       caption = "Source: https://ourworldindata.org/co2-and-other-greenhouse-gas-emissions")
+
+anim_save("temp_anomaly.gif", temp_long_term)
+
 write_rds(temp_long_term, "temp_long_term.rds")
 
 ```
 
 ```{r}
+
+co2_long_term <- read_csv("co2-concentration-long-term.csv",
+                          col_types = cols(
+                            Year = col_double(),
+                            `CO2 concentrations (NOAA, 2018)` = col_double()
+                          )) %>%
+  rename("co2_concentrations" = `CO2 concentrations (NOAA, 2018)`) %>%
+  filter(Year >= 1850)
+
+temp_long_term <- read_csv("temperature-anomaly.csv",
+                           col_types = cols(
+                             Entity = col_character(),
+                             Year = col_double(),
+                             `Median temperature anomaly from 1961-1990 average` = col_double(),
+                             `Upper bound (95% CI)` = col_double(),
+                             `Lower bound (95% CI)` = col_double()
+                           )) %>%
+  rename("median_temp_anomaly" = `Median temperature anomaly from 1961-1990 average`,
+         "upper_bound" = `Upper bound (95% CI)`,
+         "lower_bound" = `Lower bound (95% CI)`) %>%
+  select(- upper_bound,
+         - lower_bound) %>%
+  slice(1:170)
 
 correlation <- full_join(co2_long_term, temp_long_term, by = "Year") %>%
   drop_na()
@@ -60,6 +111,11 @@ correlation <- full_join(co2_long_term, temp_long_term, by = "Year") %>%
 write_rds(correlation, "correlation.rds")
 
 ```
+
+
+
+
+
 
 
 
