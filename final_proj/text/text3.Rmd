@@ -4,7 +4,7 @@ author: "Andre Ferreira"
 output: html_document
 ---
 
-It is a truly concerning statistic that only 44% of the US public believes 
+<center> It is a truly concerning statistic that only 44% of the US public believes 
 climate change to be a very serious threat. Unfortunately, this data is 
 evidence that there still exist individuals that don't believe the science. It 
 is now more important than ever that world leaders make well-informed decisions
@@ -13,4 +13,4 @@ we are caught fighting over whether to believe the scientific conclusions drawn
 by climate experts. The overwhelming evidence regarding the effect of increased
 greenhouse gas emissions should push government officials to adopt necessary 
 measures to tackle this complex issue, yet conflicting beliefs surrounding the 
-reality of climate change has left climate policy at a standstill. 
+reality of climate change has left climate policy at a standstill. </center>

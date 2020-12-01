@@ -1,0 +1,101 @@
+---
+title: "model"
+output: html_document
+---
+
+```{r}
+
+library(shiny)
+library(shinythemes)
+library(PPBDS.data)
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(gganimate)
+library(plotly)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(rstanarm)
+library(gtsummary)
+library(broom.mixed)
+library(gt)
+
+```
+
+```{r}
+
+brazil_ghg <- read_csv("owid-co2-data-3.csv",
+                       col_types = cols(
+                         .default = col_double(),
+                         iso_code = col_character(),
+                         country = col_character()
+)) %>%
+  filter(country == "Brazil",
+         year >= 2000) %>%
+  select(country, 
+         co2, 
+         year,
+         co2_growth_prct, 
+         cement_co2, 
+         coal_co2, 
+         flaring_co2, 
+         gas_co2, 
+         oil_co2, 
+         total_ghg) %>%
+  slice(1:17)
+
+brazil_land_ghg <- read_csv("ghg-emissions-by-sector.csv",
+                            col_types = cols(
+                              Entity = col_character(),
+                              Code = col_character(),
+                              Year = col_double(),
+                              `Agriculture (GHG Emissions, CAIT)` = col_double(),
+                              `Bunker Fuels (GHG Emissions, CAIT)` = col_double(),
+                              `Industry (GHG Emissions, CAIT)` = col_double(),
+                              `Land-Use Change and Forestry (GHG Emissions, CAIT)` = col_double(),
+                              `Waste (GHG Emissions, CAIT)` = col_double(),
+                              `Buildings (GHG Emissions, CAIT)` = col_double(),
+                              `Electricity & Heat (GHG Emissions, CAIT)` = col_double(),
+                              `Fugitive from energy production (GHG Emissions, CAIT)` = col_double(),
+                              `Manufacturing/Construction energy (GHG Emissions, CAIT)` = col_double(),
+                              `Other Fuel Combustion (GHG Emissions, CAIT)` = col_double(),
+                              `Transport (GHG Emissions, CAIT)` = col_double()
+                            )) %>%
+  select(Entity, 
+         Year, 
+         `Land-Use Change and Forestry (GHG Emissions, CAIT)`) %>%
+  filter(Entity == "Brazil",
+         Year >= 2000) %>%
+  rename("country" = Entity,
+         "year" = Year,
+         "land_use" = `Land-Use Change and Forestry (GHG Emissions, CAIT)`)
+
+brazil <- full_join(brazil_ghg, brazil_land_ghg, by = "year")
+
+```
+
+```{r}
+
+brazil_fit <- stan_glm(data = brazil,
+                       family = gaussian(),
+                       formula = total_ghg ~ co2 + land_use,
+                       refresh = 0)
+
+```
+
+```{r}
+
+brazil_table <- tbl_regression(brazil_fit, 
+               exponentiate = TRUE) %>%
+  modify_table_header(column = estimate,
+                      label = "**Beta**") %>%
+  as_gt() %>%
+  tab_header(title = "Regression of Greenhouse Gas Emissions in Brazil")
+
+```
+
+
+
+
+

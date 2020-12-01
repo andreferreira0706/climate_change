@@ -5,6 +5,10 @@ library(ggplot2)
 library(ggthemes)
 library(tidyverse)
 library(gganimate)
+library(plotly)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
 
 opinion_data <- read_rds("data/opinion_data/opinion_data.rds")
 opinion_USA <- read_rds("data/opinion_USA/opinion_USA.rds")
@@ -36,11 +40,12 @@ ui <- navbarPage(
                  br(),
                  br(),
                  br(),
-                 mainPanel(cellWidth = 400,
-                           plotOutput("opinion_plot")),
+                 mainPanel(plotOutput("opinion_plot")),
                  br(),
                  br(),
-                 includeMarkdown("text/text3.Rmd")
+                 includeMarkdown("text/text3.Rmd"),
+                 mainPanel(plotlyOutput("worldshare_plot")),
+                 mainPanel(plotOutput("worldshare_map_plot"))
              )),
 
     tabPanel("CO2 and Temperature Trends",
@@ -57,9 +62,30 @@ ui <- navbarPage(
                            loader = "loader2"),
                  mainPanel(plotOutput("correlation_plot"))
                  
-             ))
+             )),
+
+    tabPanel("Geographic Data",
+         
+         fluidPage(
+             titlePanel("Continent & Country Data Exploration"),
+             
+             fluidPage(
+                
+                 
+                 sidebarLayout(
+                     sidebarPanel(
+                         selectInput("country",
+                                     "Country",
+                                     country_data$country,
+                                     multiple = TRUE, 
+                                     selected = "Afghanistan")),
+                     mainPanel(plotOutput("country_co2_plot"))),
+                 
+                 #mainPanel()
+                 
+         ))
     
-)
+))
 
 # End of UI Code
 
@@ -79,7 +105,7 @@ server <- function(input, output) {
                                         "Somewhat \n serious",
                                         "Very \n serious"),
                              name = "Attitudes") +
-            scale_fill_discrete(name = "Attitudes", 
+            scale_fill_discrete(name = "Values", 
                                 type = c("#bdd7e7", 
                                          "#eff3ff", 
                                          "#6baed6", 
@@ -89,12 +115,9 @@ server <- function(input, output) {
             labs(title = "United States Public Opinion",
                  subtitle = "Public Opinion Regarding the Severity of the Climate
                  Crisis",
-                 x = "Values",
-                 y = "Attitudes",
-                 caption = "Source: https://theconversation.com/caribbean-residents
-                 -see-climate-change-as-a-severe-threat-but-most-in-us-dont-heres-
-                 why-91049")
-    
+                 x = "Attitudes",
+                 y = "Values")
+        
 })  
     
     output$opinion2_plot <- renderPlot({
@@ -112,21 +135,56 @@ server <- function(input, output) {
                  subtitle = "Public Opinion in the United States According to One's
                  Political Ideologies",
                  x = "Political Affilation",
-                 y = "Percent of Individuals Who Believe in Climate Change",
-                 caption = "Source: https://theconversation.com/caribbean-residents
-                 -see-climate-change-as-a-severe-threat-but-most-in-us-dont-heres-
-                 why-91049")
+                 y = "Percent of Individuals Who Believe in Climate Change")
             
 })
     
-    output$co2concentration_plot <- renderPlot({
+    output$worldshare_plot <- renderPlotly({
+        
+        country_data <- country_data %>%
+            select(country, year, share_global_co2, cumulative_co2, iso_code) %>%
+            arrange(desc(cumulative_co2)) %>%
+            filter(year == 2018,
+                   iso_code != "OWID_WRL") %>%
+            slice(1:8) %>%
+            ggplot(aes(x = share_global_co2, y = cumulative_co2)) +
+            geom_text(aes(label = iso_code), size = 3, angle = 45) +
+            labs(title = "Global CO2 Emissions (2018 Data)",
+                 subtitle = "Measuring National Emissions in 2018",
+                 x = "National CO2 Emissions (Share of Global Total)",
+                 y = "Cumulative CO2 Emissions (Million Tonnes per Year)") +
+            theme_bw()
+        
+        plotly_build(country_data)
+        
+    })
+    
+    output$worldshare_map_plot <- renderPlot({
+        
+        world <- ne_countries(scale = "medium", returnclass = "sf") %>%
+            rename("country" = name,
+                   "iso_code" = sov_a3) 
+        
+        country_data <- country_data %>%
+            select(country, year, share_global_co2, iso_code) %>%
+            filter(year == 2018,
+                   iso_code != "OWID_WRL") 
+        
+        world_map <- full_join(world, country_data, by = "country")
+        
+        ggplot(data = world_map) +
+            geom_sf(aes(fill = share_global_co2))
+        
+    })
+    
+    output$co2concentration_plot <- renderImage({
         
         list(
             src = 'data/temp_co2/co2_concentration.gif',
             contentType = 'image/gif'
         )
         
-})
+}, deleteFile = FALSE)
     
     output$tempanomaly_plot <- renderPlot({
         
@@ -155,6 +213,56 @@ server <- function(input, output) {
      
     }) 
     
+    output$continent_co2_plot <- renderPlot({
+        
+        continent_data %>%
+            select(country, year, co2) %>%
+            filter(country %in% input$country) %>%
+            ggplot(aes(x = year, y = co2, group = country, color = country)) +
+            geom_smooth(method = "lm", se = FALSE, color = "red") +
+            geom_point() + 
+            theme_bw() 
+        
+    }) 
+    
+    output$continent_co2_growth_plot <- renderPlot({
+        
+        continent_data %>%
+            select(country, 
+                   year, 
+                   co2_growth_prct) %>%
+            filter(country %in% input$country) %>%
+            ggplot(aes(x = year, 
+                       y = co2_growth_prct, 
+                       group = country,
+                       color = country)) +
+            geom_smooth(method = "lm", 
+                        se = FALSE, 
+                        color = "black",
+                        linetype = 1) +
+            geom_point() + 
+            theme_clean() 
+        
+    }) 
+    
+    output$country_co2_plot <- renderPlot({
+        
+            country_data %>%
+            select(country, 
+                   year, 
+                   co2) %>%
+            filter(country %in% input$country) %>%
+            ggplot(aes(x = year, 
+                       y = co2, 
+                       group = country,
+                       color = country)) +
+            geom_smooth(method = "lm", 
+                        se = FALSE, 
+                        color = "black",
+                        linetype = 1) +
+            geom_point() 
+        
+    }) 
     
 }
 
