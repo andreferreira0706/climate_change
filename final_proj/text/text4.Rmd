@@ -1,0 +1,16 @@
+---
+title: "text4"
+author: "Andre Ferreira"
+output: html_document
+---
+
+<center> The most concerning statistic is that the United States continues to be one of the
+largest and most significant emitters of carbon dioxide emissions. The US is only 
+second to China in having the largest national share of CO2 emissions at nearly 15
+percent of the global total, and it is the country with the highest cumulative CO2 
+emissions value. Despite the divisiveness of US public opinion surrounding the severity 
+of climate change and the role of human activity in worsening its effect, there is 
+no denying the United States' role in growing carbon emissions. Federal, state, and 
+local governments have all debated climate change policies, but have failed to implement
+emission regulations that significantly reduce the nation's carbon footprint as a result
+of polarization in opinion. </center>

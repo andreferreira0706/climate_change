@@ -45,7 +45,10 @@ ui <- navbarPage(
                  br(),
                  includeMarkdown("text/text3.Rmd"),
                  mainPanel(plotlyOutput("worldshare_plot")),
-                 mainPanel(plotOutput("worldshare_map_plot"))
+                 br(),
+                 includeMarkdown("text/text4.Rmd"),
+                 mainPanel(plotOutput("worldshare_map_plot"),
+                           width = 700)
              )),
 
     tabPanel("CO2 and Temperature Trends",
@@ -54,13 +57,17 @@ ui <- navbarPage(
                  titlePanel("The Relationship that Exists Between Carbon Emissions
                             & Temperature Anomalies"),
                  
-                 mainPanel(imageOutput("co2concentration_plot"),
+                 mainPanel(splitLayout(
+                     cellWidths = 400,
+                     cellArgs = list(style = "padding: 25px"),
+                     imageOutput("co2concentration_plot"),
                            type = "html",
-                           loader = "loader2"),
-                 mainPanel(imageOutput("tempanomaly_plot"),
+                           loader = "loader2",
+                     imageOutput("tempanomaly_plot"),
                            type = "html",
-                           loader = "loader2"),
-                 mainPanel(plotOutput("correlation_plot"))
+                           loader = "loader2")),
+                 mainPanel(plotOutput("correlation_plot"),
+                           width = 700)
                  
              )),
 
@@ -71,7 +78,6 @@ ui <- navbarPage(
              
              fluidPage(
                 
-                 
                  sidebarLayout(
                      sidebarPanel(
                          selectInput("country",
@@ -173,7 +179,9 @@ server <- function(input, output) {
         world_map <- full_join(world, country_data, by = "country")
         
         ggplot(data = world_map) +
-            geom_sf(aes(fill = share_global_co2))
+            geom_sf(aes(fill = share_global_co2)) +
+            labs(title = "World Plot Depicting Global CO2 Share") +
+            scale_fill_continuous(name = "Percentage of CO2 Share")
         
     })
     
@@ -181,19 +189,21 @@ server <- function(input, output) {
         
         list(
             src = 'data/temp_co2/co2_concentration.gif',
-            contentType = 'image/gif'
+            contentType = 'image/gif',
+            height = 400
         )
         
 }, deleteFile = FALSE)
     
-    output$tempanomaly_plot <- renderPlot({
+    output$tempanomaly_plot <- renderImage({
         
         list(
             src = 'data/temp_co2/temp_anomaly.gif',
-            contentType = 'image/gif'
+            contentType = 'image/gif',
+            height = 400
         )
         
-    })
+    }, deleteFile = FALSE)
    
     output$correlation_plot <- renderPlot({
         
