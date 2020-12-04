@@ -1,0 +1,21 @@
+---
+title: "text7"
+author: "Andre Ferreira"
+output: html_document
+---
+
+<br>
+
+Despite current climate policies to reduce carbon emissions, international targets
+are not being reached fast enough. The graphs above show that over the years, there
+has been an uptick in CO2 concentrations in every continent (besides Antarctica due
+to insufficient data), some more drastic than others. The question that many scientists
+and political officials are asking is whether we can make progress fast enough? Is it 
+possible for countries to successfully reduce emissions whilst building their economies? 
+
+I encourage you to see whether countries of your own interest meet this criteria! There 
+certainly exists some countries who have shown progress in reducing emissions, as well as 
+increasing their GDP. These examples, such as Portugal, the UK, and France, makes it clear 
+that it is possible to transition to low-carbon alternatives while boosting one's economy. 
+
+<br>

@@ -48,7 +48,8 @@ ui <- navbarPage(
                  br(),
                  includeMarkdown("text/text4.Rmd"),
                  mainPanel(plotOutput("worldshare_map_plot"),
-                           width = 700)
+                           width = 700),
+                 includeMarkdown("text/text6.Rmd")
              )),
 
     tabPanel("CO2 and Temperature Trends",
@@ -67,7 +68,10 @@ ui <- navbarPage(
                            type = "html",
                            loader = "loader2")),
                  mainPanel(plotOutput("correlation_plot"),
-                           width = 700)
+                           width = 700),
+                 br(),
+                 includeMarkdown("text/text5.Rmd")
+                 
                  
              )),
 
@@ -78,6 +82,13 @@ ui <- navbarPage(
              
              fluidPage(
                 
+                 br(),
+                 br(),
+                 mainPanel(plotOutput("continent_co2_plot"),
+                           width = 700),
+                 br(),
+                 includeMarkdown("text/text7.Rmd"),
+                 br(),
                  sidebarLayout(
                      sidebarPanel(
                          selectInput("country",
@@ -85,9 +96,9 @@ ui <- navbarPage(
                                      country_data$country,
                                      multiple = TRUE, 
                                      selected = "Afghanistan")),
-                     mainPanel(plotOutput("country_co2_plot"))),
-                 
-                 #mainPanel()
+                     mainPanel(plotOutput("country_co2_plot"),
+                               plotOutput("country_pop_plot"),
+                               plotOutput("country_gdp_plot")))
                  
          ))
     
@@ -225,33 +236,15 @@ server <- function(input, output) {
     
     output$continent_co2_plot <- renderPlot({
         
-        continent_data %>%
+            continent_data %>%
             select(country, year, co2) %>%
-            filter(country %in% input$country) %>%
-            ggplot(aes(x = year, y = co2, group = country, color = country)) +
-            geom_smooth(method = "lm", se = FALSE, color = "red") +
-            geom_point() + 
-            theme_bw() 
-        
-    }) 
-    
-    output$continent_co2_growth_plot <- renderPlot({
-        
-        continent_data %>%
-            select(country, 
-                   year, 
-                   co2_growth_prct) %>%
-            filter(country %in% input$country) %>%
-            ggplot(aes(x = year, 
-                       y = co2_growth_prct, 
-                       group = country,
-                       color = country)) +
-            geom_smooth(method = "lm", 
-                        se = FALSE, 
-                        color = "black",
-                        linetype = 1) +
-            geom_point() + 
-            theme_clean() 
+            ggplot(aes(x = year, y = co2, group = country)) +
+            facet_wrap(~ country) +
+            geom_line() + 
+            theme_bw() +
+            labs(title = "Continental Carbon Emissions Over Time",
+                 x = "Year",
+                 y = "CO2 Concentrations (ppm)")
         
     }) 
     
@@ -269,8 +262,61 @@ server <- function(input, output) {
             geom_smooth(method = "lm", 
                         se = FALSE, 
                         color = "black",
-                        linetype = 1) +
-            geom_point() 
+                        linetype = 2) +
+            geom_point() +
+            theme_classic() +
+            labs(title = "National CO2 Emissions",
+                 x = "Year",
+                 y = "CO2 Concentrations (ppm)") +
+            scale_color_discrete(name = "Country")
+        
+    }) 
+    
+    output$country_pop_plot <- renderPlot({
+        
+        country_data %>%
+            select(country, 
+                   year, 
+                   population) %>%
+            filter(country %in% input$country) %>%
+            ggplot(aes(x = year, 
+                       y = population, 
+                       group = country,
+                       color = country)) +
+            geom_smooth(method = "lm", 
+                        se = FALSE, 
+                        color = "black",
+                        linetype = 2) +
+            geom_point() +
+            theme_classic() +
+            labs(title = "National Population Growth",
+                 x = "Year",
+                 y = "Population") +
+            scale_color_discrete(name = "Country")
+        
+    }) 
+    
+    output$country_gdp_plot <- renderPlot({
+        
+        country_data %>%
+            select(country, 
+                   year, 
+                   gdp) %>%
+            filter(country %in% input$country) %>%
+            ggplot(aes(x = year, 
+                       y = gdp, 
+                       group = country,
+                       color = country)) +
+            geom_smooth(method = "lm", 
+                        se = FALSE, 
+                        color = "black",
+                        linetype = 2) +
+            geom_point() +
+            theme_classic() +
+            labs(title = "National GDP Growth",
+                 x = "Year",
+                 y = "GDP") +
+            scale_color_discrete(name = "Country")
         
     }) 
     

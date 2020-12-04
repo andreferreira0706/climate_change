@@ -26,7 +26,8 @@ country_data <- read_csv("owid-co2-data.csv",
                            country = col_character()
                          )) %>%
   drop_na(iso_code) %>%
-  filter(year >= 1990)
+  filter(year >= 1990,
+         country != "World")
 
 write_rds(country_data, "country_data.rds")
 

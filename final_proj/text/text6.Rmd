@@ -1,0 +1,11 @@
+---
+title: "text6"
+author: "Andre Ferreira"
+output: html_document
+---
+
+<center> Ideally, public opinion surrounding climate change in both the United States and 
+around the globe should have reached a unanimous consensus. One that recognizes 
+the true severity of this issue, and thus, understands the need to take action. 
+I seek to prove beyond a shadow of a doubt the link between global temperatures 
+and greenhouse gas concentrations. </center>

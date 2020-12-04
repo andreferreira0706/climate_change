@@ -1,0 +1,49 @@
+---
+title: "text5"
+author: "Andre Ferreira"
+output: html_document
+---
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+The graphs above are evidence of the correlation/link that exists between global 
+temperatures atmospheric CO2 concentration. The data shows us that over the last 
+few decades, global temperatures have increased sharply, and emissions from human
+activities are the principle driver of this accelerated warming. 
+
+According to the Intergovernmental Panel on Climate Change (IPCC):
+
+<center> "Anthropogenic greenhouse gas emissions have increased since the pre-industrial era,
+driven largely by economic and population growth, and are now higher than ever. This
+has led to atmospheric concentrations of carbon dioxide, methane, and nitrous oxide 
+that are unprecedented in at least the last 800,000 years. Their effects, together with
+those of other anthroprogenic drivers, have been detected through the climate system
+and are extremely likely to have been the dominant cause of the observed warming
+since the mid-20th century." </center>
+
+Although this increase of one degree celsius seems small and insignificant, its effects
+can actually have truly devastating impacts on our climate. The manner in which carbon
+emissions have skyrocketed after the Industrial Revolution are unprecedented, with CO2
+concentrations increasing at rates never before seen in human history. 
+

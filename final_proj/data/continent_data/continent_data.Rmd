@@ -27,7 +27,8 @@ continent_data <- read_csv("owid-co2-data-2.csv",
                       "Australia",
                       "Europe",
                       "North America",
-                      "South America")) %>%
+                      "South America"),
+         year >= 1850) %>%
   drop_na(co2_growth_prct)
   
 write_rds(continent_data, "continent_data.rds")
