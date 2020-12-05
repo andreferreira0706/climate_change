@@ -33,3 +33,19 @@ write_rds(country_data, "country_data.rds")
 
 ```
 
+```{r}
+
+        world <- ne_countries(scale = "medium", returnclass = "sf") %>%
+            rename("country" = name,
+                   "iso_code" = sov_a3) 
+        
+        country_data <- country_data %>%
+            select(country, year, share_global_co2, iso_code) %>%
+            filter(year == 2018,
+                   iso_code != "OWID_WRL") 
+        
+        world_map <- full_join(world, country_data, by = "country")
+
+```
+
+

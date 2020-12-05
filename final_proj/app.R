@@ -9,6 +9,7 @@ library(plotly)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(gtsummary)
 
 opinion_data <- read_rds("data/opinion_data/opinion_data.rds")
 opinion_USA <- read_rds("data/opinion_USA/opinion_USA.rds")
@@ -102,7 +103,22 @@ ui <- navbarPage(
                  
          ))
     
-))
+),
+
+tabPanel("Model", 
+         titlePanel("Model"),
+         mainPanel(tableOutput("tbl_regression"))),
+
+tabPanel("About", 
+         titlePanel("About"),
+         h3("Project Background and Motivations"),
+         p("Hello, this is where I talk about my project."),
+         h3("About Me"),
+         p("My name is Andre Ferreira and I am concentrating in Government
+             with a secondary in History. 
+             You can reach me at andreferreira@college.harvard.edu."))
+
+)
 
 # End of UI Code
 
@@ -177,17 +193,6 @@ server <- function(input, output) {
     })
     
     output$worldshare_map_plot <- renderPlot({
-        
-        world <- ne_countries(scale = "medium", returnclass = "sf") %>%
-            rename("country" = name,
-                   "iso_code" = sov_a3) 
-        
-        country_data <- country_data %>%
-            select(country, year, share_global_co2, iso_code) %>%
-            filter(year == 2018,
-                   iso_code != "OWID_WRL") 
-        
-        world_map <- full_join(world, country_data, by = "country")
         
         ggplot(data = world_map) +
             geom_sf(aes(fill = share_global_co2)) +
@@ -318,7 +323,18 @@ server <- function(input, output) {
                  y = "GDP") +
             scale_color_discrete(name = "Country")
         
-    }) 
+    })
+    
+    output$tbl_regression <- renderTable({
+        
+        brazil_table %>%
+            modify_table_header(column = estimate,
+                                label = "**Beta**") %>%
+            as_gt() %>%
+            tab_header(title = "Regression of Greenhouse Gas Emissions in Brazil")
+        
+     
+    })
     
 }
 

@@ -32,7 +32,7 @@ brazil_ghg <- read_csv("owid-co2-data-3.csv",
                          country = col_character()
 )) %>%
   filter(country == "Brazil",
-         year >= 2000) %>%
+         year >= 1900) %>%
   select(country, 
          co2, 
          year,
@@ -42,8 +42,7 @@ brazil_ghg <- read_csv("owid-co2-data-3.csv",
          flaring_co2, 
          gas_co2, 
          oil_co2, 
-         total_ghg) %>%
-  slice(1:17)
+         total_ghg) 
 
 brazil_land_ghg <- read_csv("ghg-emissions-by-sector.csv",
                             col_types = cols(
@@ -66,7 +65,7 @@ brazil_land_ghg <- read_csv("ghg-emissions-by-sector.csv",
          Year, 
          `Land-Use Change and Forestry (GHG Emissions, CAIT)`) %>%
   filter(Entity == "Brazil",
-         Year >= 2000) %>%
+         Year >= 1900) %>%
   rename("country" = Entity,
          "year" = Year,
          "land_use" = `Land-Use Change and Forestry (GHG Emissions, CAIT)`)
@@ -77,9 +76,9 @@ brazil <- full_join(brazil_ghg, brazil_land_ghg, by = "year")
 
 ```{r}
 
-brazil_fit <- stan_glm(data = brazil,
+brazil_fit <- stan_glm(data = brazil_ghg,
                        family = gaussian(),
-                       formula = total_ghg ~ co2 + land_use,
+                       formula = total_ghg ~ gas_co2 + cement_co2 + flaring_co2 + oil_co2 + coal_co2,
                        refresh = 0)
 
 ```
@@ -87,13 +86,15 @@ brazil_fit <- stan_glm(data = brazil,
 ```{r}
 
 brazil_table <- tbl_regression(brazil_fit, 
-               exponentiate = TRUE) %>%
-  modify_table_header(column = estimate,
-                      label = "**Beta**") %>%
-  as_gt() %>%
-  tab_header(title = "Regression of Greenhouse Gas Emissions in Brazil")
+                                       exponentiate = TRUE) 
+
+new_data <- tibble(land_use = 500,
+                   gas_co2 = 70)
+
+posterior_predict(brazil_fit, newdata = new_data)
 
 ```
+
 
 
 
