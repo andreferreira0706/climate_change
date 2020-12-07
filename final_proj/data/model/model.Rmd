@@ -44,6 +44,8 @@ brazil_ghg <- read_csv("owid-co2-data-3.csv",
          oil_co2, 
          total_ghg) 
 
+
+
 brazil_land_ghg <- read_csv("ghg-emissions-by-sector.csv",
                             col_types = cols(
                               Entity = col_character(),

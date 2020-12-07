@@ -14,6 +14,13 @@ library(ggplot2)
 library(ggthemes)
 library(tidyverse)
 library(gganimate)
+library(plotly)
+library(sf)
+library(rgdal)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(gtsummary)
+library(magick)
 
 ```
 
@@ -38,13 +45,27 @@ write_rds(country_data, "country_data.rds")
         world <- ne_countries(scale = "medium", returnclass = "sf") %>%
             rename("country" = name,
                    "iso_code" = sov_a3) 
+
+write_rds(world, "world.rds")
         
-        country_data <- country_data %>%
+        country_data_2 <- country_data %>%
             select(country, year, share_global_co2, iso_code) %>%
             filter(year == 2018,
                    iso_code != "OWID_WRL") 
         
-        world_map <- full_join(world, country_data, by = "country")
+write_rds(country_data_2, "country_data_2.rds")
+        
+        world_map <- full_join(world, country_data_2, by = "country") 
+        
+        world_map <- world_map %>%
+          ggplot() +
+            geom_sf(aes(fill = share_global_co2)) +
+            labs(title = "World Plot Depicting Global CO2 Share") +
+            scale_fill_continuous(name = "Percentage of CO2 Share")
+        
+        ggsave("world_map.png", world_map, height = 2, width = 2) 
+        
+write_rds(world_map, "world_map.rds")
 
 ```
 

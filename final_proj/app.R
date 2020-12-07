@@ -7,6 +7,7 @@ library(tidyverse)
 library(gganimate)
 library(plotly)
 library(sf)
+library(rgdal)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(gtsummary)
@@ -18,6 +19,9 @@ country_data <- read_rds("data/country_data/country_data.rds")
 co2_long_term <- read_rds("data/temp_co2/co2_long_term.rds")
 temp_long_term <- read_rds("data/temp_co2/temp_long_term.rds")
 correlation <- read_rds("data/temp_co2/correlation.rds")
+world <- read_rds("data/country_data/world.rds")
+world_map <- read_rds("data/country_data/world_map.rds")
+country_data_2 <- read_rds("data/country_data/country_data_2.rds")
 
 ui <- navbarPage(
     "The Reality of Climate Change",
@@ -48,9 +52,8 @@ ui <- navbarPage(
                  mainPanel(plotlyOutput("worldshare_plot")),
                  br(),
                  includeMarkdown("text/text4.Rmd"),
-                 mainPanel(plotOutput("worldshare_map_plot"),
-                           width = 700),
-                 includeMarkdown("text/text6.Rmd")
+                 includeMarkdown("text/text6.Rmd"),
+                 mainPanel(imageOutput("worldshare_map_plot"))
              )),
 
     tabPanel("CO2 and Temperature Trends",
@@ -192,14 +195,16 @@ server <- function(input, output) {
         
     })
     
-    output$worldshare_map_plot <- renderPlot({
+    output$worldshare_map_plot <- renderImage({
         
-        ggplot(data = world_map) +
-            geom_sf(aes(fill = share_global_co2)) +
-            labs(title = "World Plot Depicting Global CO2 Share") +
-            scale_fill_continuous(name = "Percentage of CO2 Share")
+        list(src = 'data/country_data/world_map.png',
+             contentType = 'image/png', 
+             width = 700, 
+             height = 700
+             )
         
-    })
+        
+    }, deleteFile = FALSE)
     
     output$co2concentration_plot <- renderImage({
         
