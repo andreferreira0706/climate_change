@@ -63,8 +63,6 @@ write_rds(country_data_2, "country_data_2.rds")
             labs(title = "World Plot Depicting Global CO2 Share") +
             scale_fill_continuous(name = "Percentage of CO2 Share")
         
-        ggsave("world_map.png", world_map, height = 2, width = 2) 
-        
 write_rds(world_map, "world_map.rds")
 
 ```

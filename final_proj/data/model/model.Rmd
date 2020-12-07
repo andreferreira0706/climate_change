@@ -20,6 +20,7 @@ library(rstanarm)
 library(gtsummary)
 library(broom.mixed)
 library(gt)
+library(magick)
 
 ```
 
@@ -44,7 +45,7 @@ brazil_ghg <- read_csv("owid-co2-data-3.csv",
          oil_co2, 
          total_ghg) 
 
-
+write_rds(brazil_ghg, "brazil_ghg.rds")
 
 brazil_land_ghg <- read_csv("ghg-emissions-by-sector.csv",
                             col_types = cols(
@@ -83,6 +84,8 @@ brazil_fit <- stan_glm(data = brazil_ghg,
                        formula = total_ghg ~ gas_co2 + cement_co2 + flaring_co2 + oil_co2 + coal_co2,
                        refresh = 0)
 
+write_rds(brazil_fit, "brazil_fit.rds")
+
 ```
 
 ```{r}
@@ -90,10 +93,15 @@ brazil_fit <- stan_glm(data = brazil_ghg,
 brazil_table <- tbl_regression(brazil_fit, 
                                        exponentiate = TRUE) 
 
-new_data <- tibble(land_use = 500,
-                   gas_co2 = 70)
+brazil_table <- brazil_table %>%
+            modify_table_header(column = estimate,
+                                label = "**Beta**") %>%
+            as_gt() %>%
+            tab_header(title = "Regression of Greenhouse Gas Emissions in Brazil")
 
-posterior_predict(brazil_fit, newdata = new_data)
+write_rds(brazil_table, "brazil_table.rds")
+
+
 
 ```
 

@@ -11,6 +11,12 @@ library(rgdal)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(gtsummary)
+library(magick)
+
+# The following libraries all proved incredibly useful to applying my functions. It
+# was interesting how after only one semester, I went from not understanding the 
+# most basic of code to all that you see in the website. Thank you to the course staff
+# for all your help!
 
 opinion_data <- read_rds("data/opinion_data/opinion_data.rds")
 opinion_USA <- read_rds("data/opinion_USA/opinion_USA.rds")
@@ -22,6 +28,11 @@ correlation <- read_rds("data/temp_co2/correlation.rds")
 world <- read_rds("data/country_data/world.rds")
 world_map <- read_rds("data/country_data/world_map.rds")
 country_data_2 <- read_rds("data/country_data/country_data_2.rds")
+brazil_ghg <- read_rds("data/model/brazil_ghg.rds")
+brazil_fit <- read_rds("data/model/brazil_fit.rds")
+brazil_table <- read_rds("data/model/brazil_table.rds")
+
+# I read all my rds files that I developed within my Markdown files
 
 ui <- navbarPage(
     "The Reality of Climate Change",
@@ -56,6 +67,8 @@ ui <- navbarPage(
                  mainPanel(imageOutput("worldshare_map_plot"))
              )),
 
+# This is the end of my first tab, which includes a variety of text and graphs
+
     tabPanel("CO2 and Temperature Trends",
              
              fluidPage(
@@ -71,6 +84,9 @@ ui <- navbarPage(
                      imageOutput("tempanomaly_plot"),
                            type = "html",
                            loader = "loader2")),
+                 
+# The split layout function allowed me to put the two images beside each other 
+                 
                  mainPanel(plotOutput("correlation_plot"),
                            width = 700),
                  br(),
@@ -104,22 +120,56 @@ ui <- navbarPage(
                                plotOutput("country_pop_plot"),
                                plotOutput("country_gdp_plot")))
                  
+# The selectInput function allows me to make the graph interactive, in that an 
+# individual can choose a country and see the data that relates to it
+                 
          ))
     
 ),
 
 tabPanel("Model", 
          titlePanel("Model"),
-         mainPanel(tableOutput("tbl_regression"))),
+         mainPanel(imageOutput("tbl_regression")),
+         includeMarkdown("text/text8.Rmd")),
 
 tabPanel("About", 
          titlePanel("About"),
          h3("Project Background and Motivations"),
-         p("Hello, this is where I talk about my project."),
+         p("This is my final project for Gov50: Data. After having worked with 
+           a climate change organization this summer located in Brazil, where I 
+           was able to learn about this issue from an international perspective.
+           While some countries fail to hold our changing climate is a priority, 
+           there are others who are dedicating their time to building a
+           sustainable economy. A major reason as to why there is not more
+           climate action across the globe is because people feel as though 
+           it isn't much of an issue to dedicate time and resources towards.
+           Therefore, I wanted to make clear within my project the correlation 
+           that exists between global temperature anomalies and global carbon
+           concentrations. Reducing emissions is extremely important to maintain
+           the wellbeing of our planet, and I attempt to make that evident with
+           my research."),
+         h3("Dataset List:"),
+         p("My primary dataset was from 'Our World in Data', a site that develops
+           emission information for a variety of country profiles and analyzes
+           the effect of carbon emissions on the environment. As climate change
+           is one of the most existential issues of our time, this organization
+           feels research and data are extremely important in combatting these issues 
+           and achieving progress."),
+         p("My secondary data source is from a news outlet known as 'The Conversation',
+           which analyzes public opinion trends on a variety of subjects,
+           one of these being the US opinion towards the severity of climate 
+           change and whether its existence is the result of human activity. 
+           I felt as though it was necessary I include this information because
+           it brings to light the importance of this project. Despite the US being
+           the country with the second highest CO2 emissions, there is not
+           a general consensus about the severity of our changing climate and 
+           a need to address it."),
          h3("About Me"),
          p("My name is Andre Ferreira and I am concentrating in Government
              with a secondary in History. 
-             You can reach me at andreferreira@college.harvard.edu."))
+             You can reach me at andreferreira@college.harvard.edu. The Github
+           for this project is: https://github.com/andreferreira0706"),
+         mainPanel(imageOutput("picture_me")))
 
 )
 
@@ -141,6 +191,10 @@ server <- function(input, output) {
                                         "Somewhat \n serious",
                                         "Very \n serious"),
                              name = "Attitudes") +
+            
+# I have come to better understand the function that is necessary to be applied
+# in different scenarios when wanting to change the label of legends            
+            
             scale_fill_discrete(name = "Values", 
                                 type = c("#bdd7e7", 
                                          "#eff3ff", 
@@ -185,6 +239,10 @@ server <- function(input, output) {
             slice(1:8) %>%
             ggplot(aes(x = share_global_co2, y = cumulative_co2)) +
             geom_text(aes(label = iso_code), size = 3, angle = 45) +
+            
+# Although I don't have much experience with geom_text, I really liked how I could
+# use the iso_code to display the countries on the graph
+            
             labs(title = "Global CO2 Emissions (2018 Data)",
                  subtitle = "Measuring National Emissions in 2018",
                  x = "National CO2 Emissions (Share of Global Total)",
@@ -197,10 +255,10 @@ server <- function(input, output) {
     
     output$worldshare_map_plot <- renderImage({
         
-        list(src = 'data/country_data/world_map.png',
+        list(src = 'data/country_data/file2.png',
              contentType = 'image/png', 
              width = 700, 
-             height = 700
+             height = 400
              )
         
         
@@ -330,16 +388,27 @@ server <- function(input, output) {
         
     })
     
-    output$tbl_regression <- renderTable({
-        
-        brazil_table %>%
-            modify_table_header(column = estimate,
-                                label = "**Beta**") %>%
-            as_gt() %>%
-            tab_header(title = "Regression of Greenhouse Gas Emissions in Brazil")
+    output$tbl_regression <- renderImage({
+
+        list(src = 'data/model/file.png',
+             contentType = 'image/png', 
+             width = 500, 
+             height = 400
+        )
         
      
-    })
+    }, deleteFile = FALSE)
+    
+    output$picture_me <- renderImage({
+        
+        list(src = 'data/country_data/picture.png',
+             contentType = 'image/png', 
+             width = 300, 
+             height = 400
+        )
+        
+        
+    }, deleteFile = FALSE)
     
 }
 

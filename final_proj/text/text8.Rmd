@@ -1,0 +1,61 @@
+---
+title: "text8"
+author: "Andre Ferreira"
+output: html_document
+---
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+<center> My regression model seeks to look beyond simply carbon emissions, and to total 
+greenhouse gas emissions in general. For countries like Brazil, there are more 
+factors at play than just co2 concentration. Deforestation of the Amazon Rainforest 
+in Brazil boost the nation’s greenhouse gas emissions at an extraordinary rate. 
+Climate scientists around the world agree that despite Brazil’s decrease of emissions 
+in other sectors, its skyrocketing use of deforestation has made any improvement 
+in other areas insignificant. If one were to look at Brazil’s CO2 emissions, they 
+would be falsely led to believe that the country is headed in the right direction 
+as it relates to climate justice. But in reality, its greenhouse gas values are 
+continuing to steadily increase because of factors like land use and agriculture 
+(not reported in CO2 emissions). Unfortunately for me and many others, my regression 
+could not include land use as a variable because the impacts of forest degradation, 
+especially in the Amazon, are understudied and poorly understood. Only in the last 
+few decades has there been a massive attack on our rainforests, cutting down trees 
+and tropical landscapes for profit. </center>
+
+<center> Therefore, I thought it best to do a regression on total greenhouse gases, taking 
+into consideration 5 variables. Gas, cement, flaring, oil, and coal are the five 
+principle factors of co2 emissions. The point of this regression was to see how 
+statistically relevant these factors were to Brazil’s ghg emissions, and as 
+predicted, we see that the MAD_SD for all five variables is extremely large. From 
+this data, I determined that none of these variables are statistically relevant, 
+with two of the Beta values as negative values, and three of the confidence intervals 
+having 0 as a value. The reason I believe these are statistically insignificant is 
+because land use is the primary factor for ghg. </center>
+
+<center> I tried to do a regression with land use as a variable, but because there is 
+only 30 years of data, the data isn’t exactly very reliable. However, I was happy 
+to see that the mad_sd for that variable was nearly zero, hinting that it was 
+statistically relevant. It also had a large median value and made up a large 
+majority total greenhouse gas emissions. </center>
