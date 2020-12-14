@@ -410,7 +410,25 @@ server <- function(input, output) {
         
     }, deleteFile = FALSE)
     
+    output$brazil_fit_2_plot <- renderPlot({
+        
+        brazil_land_fit %>%
+            as_tibble() %>%
+            rename(mu = `(Intercept)`) %>%
+            ggplot(aes(x = mu)) +
+            geom_histogram(aes(y = after_stat(count/sum(count))), 
+                           fill = "blue",
+                           color = "green") +
+            labs(title = "Posterior Probability Distribution",
+                 x = "Rating",
+                 y = "Probability") +
+            theme_bw()
+        
+    })
+    
+    
 }
+
 
 # End of Server Code
 

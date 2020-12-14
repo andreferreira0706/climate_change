@@ -73,7 +73,12 @@ brazil_land_ghg <- read_csv("ghg-emissions-by-sector.csv",
          "year" = Year,
          "land_use" = `Land-Use Change and Forestry (GHG Emissions, CAIT)`)
 
-brazil <- full_join(brazil_ghg, brazil_land_ghg, by = "year")
+write_rds(brazil_land_ghg, "brazil_land_ghg.rds")
+
+brazil <- full_join(brazil_ghg, brazil_land_ghg, by = "year") %>%
+  drop_na()
+
+write_rds(brazil, "brazil.rds")
 
 ```
 
@@ -85,6 +90,14 @@ brazil_fit <- stan_glm(data = brazil_ghg,
                        refresh = 0)
 
 write_rds(brazil_fit, "brazil_fit.rds")
+
+brazil_land_fit <- stan_glm(data = brazil,
+                            family = gaussian(),
+                            formula = total_ghg ~ co2 + land_use,
+                            refresh = 0)
+
+write_rds(brazil_land_fit, "brazil_land_fit.rds")
+
 
 ```
 
@@ -101,9 +114,23 @@ brazil_table <- brazil_table %>%
 
 write_rds(brazil_table, "brazil_table.rds")
 
+brazil_land_table <- tbl_regression(brazil_land_fit,
+                                    exponentiate = TRUE)
+
+brazil_land_table <- brazil_land_table %>%
+  modify_table_header(column = estimate, 
+                      label = "**Beta**") %>%
+  as_gt() %>%
+  tab_header(title = "Regression of GHG in Brazil Factoring in Land Use")
+
+
+write_rds(brazil_land_table, "brazil_land_table.rds")
 
 
 ```
+
+
+
 
 
 
